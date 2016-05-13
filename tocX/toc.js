@@ -17,7 +17,7 @@
 	var node = document.querySelector(get);
 	var nodes = node.querySelectorAll(n || 'h1,h2,h3,h4,h5');
 	if(nodes[0].id !=="") {
-		id0 = nodes[0].id
+		id0 = nodes[0].id;
 	}
 	else {
 		id0 = 'toc'+0;
@@ -34,7 +34,7 @@
 		}
 		var nodeId;
 		if(nodes[i].id !=="") {
-			nodeId = nodes[i].id
+			nodeId = nodes[i].id;
 		}
 		else {
 			nodeId = 'toc'+i;
