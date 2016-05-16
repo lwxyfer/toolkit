@@ -8,38 +8,47 @@
 export {
 	toc
 };
-
 function toc(get, n, put) {
-	let node = document.getElementById(get);
+	let node = document.querySelector(get);
 	let nodes = node.querySelectorAll(n || 'h1,h2,h3,h4,h5');
-	let out = '<ul><li>' + '<a href=#h' + '0' + '>' + nodes[0].innerHTML + '</a>';
-	nodes[0].setAttribute('id', 'h0');
-	for (var i = 1; i < nodes.length; i++) {
-		var a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
-		nodes[i].setAttribute('id', 'h' + i);
+	let id0 = "";
+	if(nodes[0].id !=="") {
+		id0 = nodes[0].id;
+	}
+	else {
+		id0 = 'toc'+0;
+		nodes[0].id= 'toc'+0;
+	}
+	let out = '<ul><li>' + '<a href=#' + id0 + '>' + nodes[0].innerHTML + '</a>';
+	for (let i = 1; i < nodes.length; i++) {
+		let a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
+		let nodeId;
 		for (let j = 1; j < a; a--) {
 			out += '<ul><li>';
 		}
 		for (let k = -1; k > a; a++) {
 			out += '</li></ul>';
 		}
-		if (a === 0) {
-			out += '</li><li>' + '<a href=#h' + i + ' >' + nodes[i].innerHTML + '</a>';
-		} else if (a === -1) {
-			out += '</li></ul><li>' + '<a href=#h' + i + ' >' + nodes[i].innerHTML + '</a>';
-		} else if (a === 1) {
-			out += '<ul><li>' + '<a href=#h' + i + ' >' + nodes[i].innerHTML + '</a>';
+		if(nodes[i].id !=="") {
+			nodeId = nodes[i].id;
+		}
+		else {
+			nodeId = 'toc'+i;
+			nodes[i].id= 'toc'+i;
+		}
+		switch(a) {
+			case 0: out += '</li><li>' + '<a href=#' + nodeId + ' >' + nodes[i].innerHTML + '</a>';
+			break;
+			case -1 : out += '</li></ul><li>' + '<a href=#' + nodeId + ' >' + nodes[i].innerHTML + '</a>';
+			break;
+			case 1: out += '<ul><li>' + '<a href=#' + nodeId + ' >' + nodes[i].innerHTML + '</a>';
+			break;
 		}
 	}
 	out += '</li></ul>';
-	() => {
-		console.log('ok')
-	}
 	if (put) {
-		let position = document.getElementById(put);
-		position.innerHTML = out;
+		let position = document.querySelector(put);
+		position.innerHTML += out;
 	}
 	return out;
 }
-
-// 使用babel CLI（command - Line - interfere） 有问题，没有转为ES5
