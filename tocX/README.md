@@ -20,6 +20,12 @@ var where = toc(get,n)
 node.innerHTML = where
 ```
 
+# 插件配置
+
+- 默认匹配： article main id="content"
+- 生成的TOC可以拖动改变位置，改变大小。
+- 默认获取h1 h2 h3 ，判断节点数量，过多就只保留h1 h2
+
 # TODO
 
 - 自定义网站匹配规则
