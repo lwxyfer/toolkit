@@ -22,13 +22,15 @@ node.innerHTML = where
 
 # 插件配置
 
-- 默认匹配： article main id="content"
-- 生成的TOC可以拖动改变位置，改变大小。
-- 默认获取h1 h2 h3 ，判断节点数量，过多就只保留h1 h2
+chrome extension为chrome插件
+
+生成图预览：
+![](https://ooo.0o0.ooo/2016/05/17/573abc571a948.png)
 
 # TODO
 
-- 自定义网站匹配规则
-- 自定义css： 样式，位置，
+- 自定义网站匹配规则：默认获取h1 h2 h3 ，判断节点数量，过多就只保留h1 h2
+- 自定义css
+- 拖动改变位置
 - 高亮当前项
 - 本地存储
