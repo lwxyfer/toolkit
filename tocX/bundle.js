@@ -1,19 +1,6 @@
 var tocx = (function () {
     'use strict';
 
-    // 模考依赖，比如现在的情况，函数里面存在依赖，但是不导出。
-
-    document.body.addEventListener('scoll', active, false)
-
-    function active(arr) {
-        let y = document.body.scrollTop || document.documentElement.scrollTop; // 页面滚动距离
-        let x = []
-        for (let i = 0; i < arr.legth; i++) {
-            x.push(y - arr[i])
-        }
-        arr.indexOf(Math.max.apply(null, arr)) // 总结下数组
-    }
-
     function toc(get, put, n = 'h1,h2,h3') {
         let node = document.querySelector(get);
         let nodes = node.querySelectorAll(n);
@@ -24,11 +11,11 @@ var tocx = (function () {
             id0 = 'toc' + 0;
             nodes[0].id = 'toc' + 0;
         }
-        let out = `<ul><li><a href=#${id0} >${nodes[0].innerHTML}</a>`;
-        let boundClient = [];
+        let out = `<ul><li><a href=#${id0} class=active>${nodes[0].innerHTML}</a>`;
+        let boundClient = [nodes[0].getBoundingClientRect().top];
         for (let i = 1; i < nodes.length; i++) {
-            let scrollTop = nodes[i].getBoundingClientRect().top + window.pageYOffset
-            boundClient.push(Math.floor(scrollTop))
+            let scrollTop = nodes[i].getBoundingClientRect().top
+            boundClient.push(Math.floor(Math.abs(scrollTop)))
             console.log(boundClient)
             let a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
             for (let j = 1; j < a; a--) {
@@ -62,6 +49,20 @@ var tocx = (function () {
             let position = document.querySelector(put);
             position.innerHTML += out;
         }
+        window.addEventListener('scroll', () => {
+            console.log('111')
+            let arr = boundClient.slice()
+            let y = window.pageYOffset
+            console.log(y)
+            let aaa = []
+            let links = document.querySelectorAll('#put a')
+            for (let i = 0; i < boundClient.length; i++) {
+                aaa.push(Math.abs(y - boundClient[i]))
+                links[i].className = ''
+            }
+            let a = aaa.indexOf(Math.min.apply(null, aaa)) // 总结下数组
+            links[a].className = 'active'
+        }, false)
         return out;
     }
 
