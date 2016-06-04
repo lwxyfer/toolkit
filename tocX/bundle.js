@@ -1,26 +1,17 @@
 var tocx = (function () {
     'use strict';
 
-    function hasClass(obj, cls) {
-        return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
-    }
+    // 模考依赖，比如现在的情况，函数里面存在依赖，但是不导出。
 
-    function addClass(obj, cls) {
-        if (!hasClass(obj, cls)) obj.className += " " + cls;
-    }
+    document.body.addEventListener('scoll', active, false)
 
-    function removeClass(obj, cls) {
-        if (hasClass(obj, cls)) {
-            var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
-            obj.className = obj.className.replace(reg, ' ');
+    function active(arr) {
+        let y = document.body.scrollTop || document.documentElement.scrollTop; // 页面滚动距离
+        let x = []
+        for (let i = 0; i < arr.legth; i++) {
+            x.push(y - arr[i])
         }
-    }
-    function toggleClass(obj, cls) {
-        if (hasClass(obj, cls)) {
-            removeClass(obj, cls);
-        } else {
-            addClass(obj, cls);
-        }
+        arr.indexOf(Math.max.apply(null, arr)) // 总结下数组
     }
 
     function toc(get, put, n = 'h1,h2,h3') {
@@ -36,9 +27,9 @@ var tocx = (function () {
         let out = `<ul><li><a href=#${id0} >${nodes[0].innerHTML}</a>`;
         let boundClient = [];
         for (let i = 1; i < nodes.length; i++) {
-            boundClient.push(nodes[i].getBoundingClientRect().top)
+            let scrollTop = nodes[i].getBoundingClientRect().top + window.pageYOffset
+            boundClient.push(Math.floor(scrollTop))
             console.log(boundClient)
-            toggleClass(nodes[i], 'active')
             let a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
             for (let j = 1; j < a; a--) {
                 out += '<ul><li>';

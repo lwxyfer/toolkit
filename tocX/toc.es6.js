@@ -15,9 +15,9 @@ export default function toc(get, put, n = 'h1,h2,h3') {
     let out = `<ul><li><a href=#${id0} >${nodes[0].innerHTML}</a>`;
     let boundClient = [];
     for (let i = 1; i < nodes.length; i++) {
-        boundClient.push(nodes[i].getBoundingClientRect().top)
+        let scrollTop = nodes[i].getBoundingClientRect().top + window.pageYOffset
+        boundClient.push(Math.floor(scrollTop))
         console.log(boundClient)
-        toggleClass(nodes[i], 'active')
         let a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
         for (let j = 1; j < a; a--) {
             out += '<ul><li>';

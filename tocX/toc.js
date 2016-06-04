@@ -1,4 +1,5 @@
 /**
+ * THIS IS ES5 VERSION.
  * [toc : generate table of content]
  * @param  {[string]} get [get the parent element of headers ]
  * @param  {[string]} put [where to put the headers]
