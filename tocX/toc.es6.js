@@ -1,4 +1,8 @@
-function toc(get, put, n = 'h1,h2,h3') {
+import {
+    toggleClass,
+} from './util.js'
+
+export default function toc(get, put, n = 'h1,h2,h3') {
     let node = document.querySelector(get);
     let nodes = node.querySelectorAll(n);
     let id0;
@@ -13,6 +17,7 @@ function toc(get, put, n = 'h1,h2,h3') {
     for (let i = 1; i < nodes.length; i++) {
         boundClient.push(nodes[i].getBoundingClientRect().top)
         console.log(boundClient)
+        toggleClass(nodes[i], 'active')
         let a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
         for (let j = 1; j < a; a--) {
             out += '<ul><li>';
