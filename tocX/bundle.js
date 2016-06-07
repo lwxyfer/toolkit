@@ -2,28 +2,18 @@ var tocx = (function () {
     'use strict';
 
     /**
-     * [debounce]
-     * @param  {[function]} action [function you want to debounce]
-     * @param  {[Number]} time   =  100 [debounce time,default is 100]
-     */
-    function debounce(action, time = 300) {
-        let last
-        if (last) {
-            clearTimeout(last)
-        }
-        last = setTimeout(action, time)
-    }
-
-    /**
      * [highlight active item]
      * @param  {[Array]} x [nodes's absolute top value]
-     * @return {[type]}   [description]
      */
     function active(x) {
         let arr = x.slice()
         let links = document.querySelectorAll('#put a')
+        let last
         window.addEventListener('scroll', () => {
-            debounce(() => {
+            if (last) {
+                clearTimeout(last)
+            }
+            last = setTimeout(() => {
                 console.log('test')
                 let y = window.pageYOffset
                 let a = []
@@ -32,7 +22,8 @@ var tocx = (function () {
                     links[i].className = ''
                 }
                 links[a.indexOf(Math.min.apply(null, a))].className = 'active'
-            }, 1000)
+            }, 100)
+
         }, false)
     }
 
@@ -42,23 +33,38 @@ var tocx = (function () {
                 e.preventDefault()
                 let ele = e.target
                 let eleLink = ele.getAttribute('href')
-                console.log(eleLink)
-                let to = document.querySelector(eleLink).getBoundingClientRect().top
-                console.log(to)
-                let y = Math.max(document.body.scrollTop, document.documentElement.scrollTop)
-                console.log(y)
-                while (y > to + 5 || y < to - 5) {
-
-                    window.setInterval(() => {
-                        document.body.scrollTop += 5
-                    }, 1000)
-                    console.log('test')
-                        //Math.floor((to - y) / 10)
-                        // document.documentElement.scrollTop += Math.floor((to - y) / 10)
-                }
+                let to = document.querySelector(eleLink).getBoundingClientRect().top + window.pageYOffset
+                smoothScroll(to, 20)
             }
-
         }, false)
+    }
+
+    /**
+     * [smoothScroll description]
+     * @param  {[NUMBER]} y     [set destination]
+     * @param  {[NUMBER]} speed = 30 [scroll speed]
+     */
+    function smoothScroll(y, speed = 30) {
+        let timer
+        let distance
+        let leap
+        let scrollHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+        let viewHeight = Math.max(window.innerHeight, document.documentElement.clientHeight, document.body.clientWidth)
+        if (scrollHeight - y - viewHeight - 20 < 0) {
+            y = scrollHeight - viewHeight - 20
+        }
+        timer = setInterval(() => {
+                distance = y - window.pageYOffset
+                if (distance < 2 && distance > -2) {
+                    clearInterval(timer)
+                }
+                leap = Math.round(distance / 10)
+                distance > 0 && distance < 10 ? leap = 1 : leap = leap
+                distance < 0 && distance > -10 ? leap = -1 : leap = leap
+                window.scroll(0, window.pageYOffset += leap)
+            },
+            speed)
+        console.log('test=====')
     }
 
     function toc(get, put, n = 'h1,h2,h3') {

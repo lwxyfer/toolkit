@@ -3,10 +3,11 @@
  * Using rollup.js to bundle module to different module loaders
  */
 import {
-    toggleClass,
-    active,
+    active
+} from './activeItem.js'
+import {
     scrollTo
-} from './util.js'
+} from './smoothScroll.js'
 
 export default function toc(get, put, n = 'h1,h2,h3') {
     let node = document.querySelector(get);
