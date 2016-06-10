@@ -8,6 +8,9 @@ import {
 import {
     scrollTo
 } from './smoothScroll.js'
+import {
+    absPosition as absP
+} from './util.js'
 
 export default function toc(get, put, n = 'h1,h2,h3') {
     let node = document.querySelector(get);
@@ -19,18 +22,16 @@ export default function toc(get, put, n = 'h1,h2,h3') {
         id0 = 'toc' + 0;
         nodes[0].id = 'toc' + 0;
     }
-    let out = `<ul><li><a href=#${id0} class=active>${nodes[0].innerHTML}</a>`;
-    let nodeTop = [nodes[0].getBoundingClientRect().top];
+    let outHtml = `<ul><li><a href=#${id0} class=active>${nodes[0].innerHTML}</a>`;
+    let nodeTop = [absP(nodes[0])]
     for (let i = 1; i < nodes.length; i++) {
-        let scrollTop = nodes[i].getBoundingClientRect().top
-        nodeTop.push(Math.floor(Math.abs(scrollTop)))
-        console.log(nodeTop)
+        nodeTop.push(absP(nodes[i]))
         let a = nodes[i].nodeName.charAt(1) - nodes[i - 1].nodeName.charAt(1);
         for (let j = 1; j < a; a--) {
-            out += '<ul><li>';
+            outHtml += '<ul><li>';
         }
         for (let k = -1; k > a; a++) {
-            out += '</li></ul>';
+            outHtml += '</li></ul>';
         }
         let nodeId;
         if (nodes[i].id !== "") {
@@ -42,22 +43,22 @@ export default function toc(get, put, n = 'h1,h2,h3') {
         let aa = `<a href=#${nodeId} >${nodes[i].innerText}</a>`
         switch (a) {
             case 0:
-                out += `</li><li>${aa}`;
+                outHtml += `</li><li>${aa}`;
                 break;
             case -1:
-                out += `</li></ul><li>${aa}`;
+                outHtml += `</li></ul><li>${aa}`;
                 break;
             case 1:
-                out += `<ul><li>${aa}`;
+                outHtml += `<ul><li>${aa}`;
                 break;
         }
     }
-    out += '</li></ul>';
+    outHtml += '</li></ul>';
     if (put) {
         let position = document.querySelector(put);
-        position.innerHTML += out;
+        position.innerHTML += outHtml;
     }
     active(nodeTop)
     scrollTo('#put')
-    return out;
+    return outHtml;
 }

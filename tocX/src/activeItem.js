@@ -22,16 +22,16 @@ export function active(x) {
         if (last) {
             clearTimeout(last)
         }
+        // use timer to avoid infinitely invoke
         last = setTimeout(() => {
-            console.log('test')
             let y = window.pageYOffset
             let a = []
             for (let i = 0; i < arr.length; i++) {
-                a.push(Math.abs(y - arr[i]))
-                links[i].className = ''
+                a.push(Math.abs(y - arr[i]));
+                links[i].className = '';
             }
             links[a.indexOf(Math.min.apply(null, a))].className = 'active'
-        }, 100)
+        }, 50)
 
     }, false)
 }

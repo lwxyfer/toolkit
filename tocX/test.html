@@ -9,13 +9,23 @@
         h1,h2 {
             color:red
         }
+        body {
+            font-family:'MicroSoft YaHei';
+        }
         #put {
             position:fixed;
             right:100px;
-            background:skyblue
+            /*background:skyblue*/
+            border:1px solid gold;
         }
         #put a {
-            padding-left:5px
+            padding-left:5px;
+            color:#000;
+            text-decoration: none;
+
+        }
+        #put a:visited {
+            color:#000
         }
         #put li {
             list-style: none
@@ -24,12 +34,13 @@
             width:50%
         }
         .active {
+            color:springgreen;
             border-left:5px solid red;
         }
         </style>
     </head>
     <body>
-        <div id="put">
+        <div id="put" draggable="true">
             <h1>TOC</h1>
         </div>
 

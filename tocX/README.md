@@ -14,6 +14,10 @@ loading ways supported:
 
 Use rollup.js to bundle. Modify rollup.config.js to config loaders.
 
+```
+rollup -c
+```
+
 # chrome extension
 
 config manifest.json to gen chrome extension.
