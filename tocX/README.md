@@ -1,6 +1,16 @@
 # TocX
 
+generate table of content.
+
+- good HTML structure
+- no dependencies
+- highlight active anchor
+- smooth scroll
+- just 1 kB
+
 DEMO:https://blog.lwxyfer.com/ghost-kai-fa-ji-lu/
+
+https://en.wikipedia.org/wiki/Smoothstep smooth stand
 
 # USAGE
 

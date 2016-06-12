@@ -9,7 +9,6 @@ export function toggleClass(obj, cls) {
         obj.className += " " + cls;
     }
 }
-
 /**
  * [highlight active item]
  * @param  {[Array]} x [nodes's absolute top value]
