@@ -6,7 +6,7 @@ generate table of content.
 - no dependencies
 - highlight active anchor
 - smooth scroll
-- just 1 kB
+- less 1 kB
 
 DEMO:https://blog.lwxyfer.com/ghost-kai-fa-ji-lu/
 
