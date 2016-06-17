@@ -1,28 +1,25 @@
 # this is my toolkit!!!
 
-I write every line code.
-I learn.
+write my own toolkit.
 
-
-## introduce
-
-1. support CMD/amd/ES Module
-2. different version: ES6,jQuery,plain JS
+Powered By ES2015
 
 # what I have here
 
-- Table of content
-
+- [Table of content](https://github.com/lwxyfer/toolkit/tree/master/tocX)
+- scrollPin
+- scrollTo
 
 # TODO
 
-- require.js : module 
 - scrollBy
 - slide img
-- eventUtil 事件封装 https://gist.github.com/objectfoo/4144898
+- eventUtil handler https://gist.github.com/objectfoo/4144898
 
 
 # reference
 
+some reference to do:
+
 - https://github.com/JingwenTian/awesome-frontend   AWESOME 系列
-- https://segmentfault.com/a/1190000004428305  17行模板引擎，重要是正则的应用。
+- https://segmentfault.com/a/1190000004428305  
