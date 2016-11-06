@@ -1,0 +1,86 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+div {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.slider {
+  width: 800px;
+  position: relative;
+  overflow: hidden;
+}
+.slider-con {
+  height: 100%;
+}
+.slider-con > div {
+  width: 800px;
+  height:100%;
+  float: left;
+  position: relative;
+  overflow: hidden;
+}
+.slider-con img {
+  width:100%;
+}
+
+.dots {
+  position:absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  border: 2px solid #fff;
+}
+.dot:nth-child(1) {
+  margin-left: 0px;
+}
+.dot.active {
+  background: #fff;
+}
+
+.arrow-bf {
+  position: absolute;
+  transform: translateY(-50%);
+  top: 50%;
+  left: 50px;
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+  line-height: 50px;
+  display: inline-block;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+.arrow-af {
+  position: absolute;
+  transform: translateY(-50%);
+  top: 50%;
+  right: 50px;
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+  line-height: 50px;
+  display: inline-block;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+
+.arrow-bf:hover, .arrow-af:hover {
+  border: 2px solid #fff;
+}
