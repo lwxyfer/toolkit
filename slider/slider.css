@@ -44,6 +44,7 @@ div {
   height: 10px;
   margin-left: 10px;
   border: 2px solid #fff;
+  cursor: pointer;
 }
 .dot:nth-child(1) {
   margin-left: 0px;

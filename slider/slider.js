@@ -15,38 +15,42 @@ var Slider = function(element, options) {
   this.$slider.css('height', this.options.height)
   this.$slider.css('width', this.options.width)
   this.status = true;
-  this.keyboard();
+  if(this.options.keyboard) {
+    this.keyboard();
+  }
   if(this.options.autoplay) {
     this.autoplay();
   }
   if(this.options.arrow) {
     this.arrow();
   }
-  this.dots();
-  this.dotActive();
+  if(this.options.dots) {
+    this.dots();
+  }
 }
 
 Slider.DEFAULTS = {
   width: '100%',
   height: 'auto',
   speed: 200,
-  loop: true, // boolean
-  autoplay: false, // boolean
+  loop: true,
+  autoplay: false,
   autoplaySpeed: 1000,
   arrow: true,
   dots: true,
-  lazyload: true,
+  keyboard: true,
 }
 
 Slider.prototype.destory = function() {
-
+  // clear css
+  // clear event
 }
 
 // 数字 字符串 连接
 Slider.prototype.move = function(distance) {
   var _this = this;
   var ml = Number(this.$con.css('marginLeft').slice(0,-2));
-  console.log(ml, distance);
+  console.log('margin: %s, distance: %s',ml, distance);
   if( (ml === 0 && distance < 0) || (ml === -this.$numWidth && distance >0))  {
     return false;
   }
@@ -116,7 +120,9 @@ Slider.prototype.dots = function() {
     dotsTem += dotTem;
   }
   dotsTem += '</div>'
-  this.$slider.append(dotsTem)
+  this.$slider.append(dotsTem);
+  this.dotActive();
+  this.dotMove()
 }
 
 Slider.prototype.dotActive = function() {
@@ -125,11 +131,26 @@ Slider.prototype.dotActive = function() {
   var w = _this.$width;
   var i = Math.abs(-ml/w);
   console.log('current index', i);
-  $('.dots .dot ').eq(i).addClass('active')
+  $('.dots .dot ').eq(i).addClass('active');
+}
+
+Slider.prototype.dotIndex = function() {
+  var _this = this;
+  var ml = Number(_this.$con.css('marginLeft').slice(0,-2));
+  var w = _this.$width;
+  var i = Math.abs(-ml/w);
+  return i;
 }
 
 Slider.prototype.dotMove = function() {
   var _this = this;
+
+  $('.dot').on('click', function() {
+    var self = this;
+    var i = _this.dotIndex();
+    console.log('dot distance', ($(self).index() - i) * _this.$width)
+    _this.move( ($(self).index() - i) * _this.$width )
+  })
 }
 
 Slider.prototype.arrow = function() {
