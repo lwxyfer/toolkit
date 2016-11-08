@@ -1,20 +1,35 @@
 'use strict';
 
 var Slider = function(element, options) {
+
   console.log(element)
   this.$slider = $(element);
   console.log(this.$slider)
   this.$con = $('.slider-con');
+
   this.options = $.extend({}, Slider.DEFAULTS, options);
+
   this.$width = this.$slider.width();
   this.$number = this.$con.children();
   this.$length = this.$number.length;
   this.$allWidth = this.$width*this.$number.length;
+
+  this.$fullWidth = this.$width*(this.$number.length+1);
   this.$numWidth = this.$width*(this.$number.length-1);
-  this.$con.css('width', (this.$allWidth).toString() );
-  this.$slider.css('height', this.options.height)
-  this.$slider.css('width', this.options.width)
+
+
+  this.$slider.css('height', this.options.height);
+  this.$slider.css('width', this.options.width);
+
+  this.$con.css('width', (this.$fullWidth).toString() );
+
+  this.$con.append(this.$con.children().eq(0).clone());
+  this.$con.prepend(this.$con.children().eq(this.$length-1).clone());
+
+  this.$con.css('left', -this.$width)
+
   this.status = true;
+
   if(this.options.keyboard) {
     this.keyboard();
   }
@@ -37,6 +52,8 @@ Slider.DEFAULTS = {
   autoplay: false,
   autoplaySpeed: 1000,
   arrow: true,
+  arrowPre:null,
+  arrowNext: null,
   dots: true,
   keyboard: true,
 }
@@ -47,24 +64,39 @@ Slider.prototype.destory = function() {
 }
 
 // 数字 字符串 连接
+// 动画优化， 考虑使用 JS 动画
+// throttle；   debounce 完成确定
+// left，  margin-left，  transform 哪个好
 Slider.prototype.move = function(distance) {
   var _this = this;
-  var ml = Number(this.$con.css('marginLeft').slice(0,-2));
-  console.log('margin: %s, distance: %s',ml, distance);
-  if( (ml === 0 && distance < 0) || (ml === -this.$numWidth && distance >0))  {
-    return false;
-  }
+
+  // 不加无线滚动
+  // var ml = Number(this.$con.css('left').slice(0,-2));
+  // console.log('margin: %s, distance: %s',ml, distance);
+  // if( (ml === 0 && distance < 0) || (ml === -this.$numWidth && distance >0))  {
+  //   return false;
+  // }
+
   if( _this.status ) {
     (function() {
       _this.status = !_this.status;
       _this.$con.animate({
-        marginLeft: '-=' + distance,
+        left: '-=' + distance,
       }, _this.options.speed, () => {
         console.log('ok');
         _this.status = !_this.status;
-        $('.dots .dot ').each(function() {
-          $(this).removeClass('active')
-        })
+
+        if(_this.index() === _this.$length) {
+          _this.$con.css('left', -_this.$width);
+          console.log('change')
+        }
+        if(_this.index() === -1) {
+          _this.$con.css('left', -_this.$allWidth);
+          console.log('change')
+        }
+
+        $('.dot').removeClass('active')
+
         _this.dotActive();
       })
     }());
@@ -95,7 +127,7 @@ Slider.prototype.keyboard = function() {
 }
 
 Slider.prototype.isOver = function() {
-  var ml = this.$con.css('marginLeft');
+  var ml = this.$con.css('left');
   console.log(ml);
   if( ml > 0 || -ml > this.$allWidth - this.$width) {
     return true;
@@ -105,12 +137,18 @@ Slider.prototype.isOver = function() {
 Slider.prototype.autoplay = function() {
   var _this = this;
   var timer = setInterval(function() {
-    var x = _this.next()
+    var x = _this.next();
+    console.log( Date.now())
     console.log(x)
     if(!x) {
       clearTimeout(timer)
     }
   }, _this.options.autoplaySpeed)
+}
+
+Slider.prototype.hoverStop = function() {
+// mouse over stop
+// mouse out start
 }
 
 Slider.prototype.dots = function() {
@@ -127,18 +165,16 @@ Slider.prototype.dots = function() {
 
 Slider.prototype.dotActive = function() {
   var _this = this;
-  var ml = Number(_this.$con.css('marginLeft').slice(0,-2));
-  var w = _this.$width;
-  var i = Math.abs(-ml/w);
+  var i = _this.index();
   console.log('current index', i);
   $('.dots .dot ').eq(i).addClass('active');
 }
 
-Slider.prototype.dotIndex = function() {
+Slider.prototype.index = function() {
   var _this = this;
-  var ml = Number(_this.$con.css('marginLeft').slice(0,-2));
+  var ml = Number(_this.$con.css('left').slice(0,-2));
   var w = _this.$width;
-  var i = Math.abs(-ml/w);
+  var i = Math.abs(-ml/w) - 1;
   return i;
 }
 
@@ -147,10 +183,11 @@ Slider.prototype.dotMove = function() {
 
   $('.dot').on('click', function() {
     var self = this;
-    var i = _this.dotIndex();
+    var i = _this.index();
     console.log('dot distance', ($(self).index() - i) * _this.$width)
     _this.move( ($(self).index() - i) * _this.$width )
   })
+
 }
 
 Slider.prototype.arrow = function() {
@@ -188,4 +225,5 @@ $.fn.slider = function( options) {
 var aa = $('.slider').slider({
   width: 800,
   height: 500,
+  // autoplay: true,
 })

@@ -20,12 +20,13 @@ div {
 }
 .slider-con {
   height: 100%;
+  position: absolute;
 }
 .slider-con > div {
   width: 800px;
   height:100%;
   float: left;
-  position: relative;
+  /*position: absolute;*/
   overflow: hidden;
 }
 .slider-con img {
