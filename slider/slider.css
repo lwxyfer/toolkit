@@ -29,7 +29,6 @@ div {
 .slider-con>div {
   height: 100%;
   float: left;
-  /*position: absolute;*/
   overflow: hidden;
 }
 
@@ -37,14 +36,14 @@ div {
   width: 100%;
 }
 
-.dots {
+.slider-dots {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.dot {
+.slider-dot {
   display: inline-block;
   width: 10px;
   height: 10px;
@@ -53,15 +52,15 @@ div {
   cursor: pointer;
 }
 
-.dot:nth-child(1) {
+.slider-dot:nth-child(1) {
   margin-left: 0px;
 }
 
-.dot.active {
+.slider-dot.active {
   background: #fff;
 }
 
-.arrow-bf, .arrow-af {
+.slider-arrow-bf, .slider-arrow-af {
   position: absolute;
   transform: translateY(-50%);
   top: 50%;
@@ -75,14 +74,14 @@ div {
   text-align: center;
 }
 
-.arrow-bf {
+.slider-arrow-bf {
   left: 50px;
 }
 
-.arrow-af {
+.slider-arrow-af {
   right: 50px;
 }
 
-.arrow-bf:hover, .arrow-af:hover {
+.slider-arrow-bf:hover, .slider-arrow-af:hover {
   border: 2px solid #fff;
 }

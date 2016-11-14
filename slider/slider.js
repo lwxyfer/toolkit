@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Slider
@@ -9,13 +9,12 @@
  */
 
 (function($){
-
+  'use strict';
   var Slider = function(element, options) {
 
     this.$element = $(element);
-
-    // simplify html structure
-    this.$element.html('<div class="slider-con">' + this.$element.html() + '</div>');
+    this.content = this.$element.html();
+    this.$element.html('<div class="slider-con">' + this.content + '</div>');
 
     // users has other names
     this.$element.addClass('slider');
@@ -24,7 +23,7 @@
 
     this.options = $.extend({}, Slider.DEFAULTS, options);
 
-    this.status = true;
+    this.status = true; // judging scroll status
     this.init();
   };
 
@@ -36,9 +35,10 @@
     autoplay: false,
     autoplaySpeed: 1000,
     arrow: true,
-    arrowPre: null,
-    arrowNext: null,
+    arrowPre: '<span class="slider-arrow-bf"><</span>',
+    arrowNext: '<span class="slider-arrow-af">></span>',
     dots: true,
+    dotClass: null,
     keyboard: true,
     resize: null,
     callback: null // after every move
@@ -60,15 +60,14 @@
     this.$allWidth = this.width * $child.length;
     this.$fullWidth = this.width * ($child.length + 1);
 
-    // cant use percentage
     $child.css('width', this.width);
     $element.css('height', options.height);
 
-    $con.css('width', (this.$fullWidth).toString());
+    $con.css('width', this.$fullWidth);
 
     // infinitescroll
-    $con.append($con.children().eq(0).clone());
-    $con.prepend($con.children().eq(this.length - 1).clone());
+    $con.append($con.children().first().clone());
+    $con.prepend($con.children().last().clone());
 
     $con.css('left', -this.width);
 
@@ -105,7 +104,6 @@
     this.$allWidth = this.width * $child.length;
     this.$fullWidth = this.width * ($child.length + 1);
 
-    // cant use percentage
     $child.css('width', this.width);
     $element.css('height', options.height);
 
@@ -119,8 +117,13 @@
   }
 
   Slider.prototype.destory = function() {
-    // clear css
-    // clear event
+    $('body').off('keydown.slider');
+    $('.slider-dots .slider-dot').off('click.slider');
+    $('.slider-arrow-af, .slider-arrow-bf').off('click.slider');
+    $(window).off('resize.slider');
+
+    this.$element.removeClass('slider');
+    this.$element.html(this.content);
   };
 
   Slider.prototype.move = function(distance) {
@@ -138,6 +141,7 @@
 
         _this.status = !_this.status;
 
+        // TODO: use transform
         _this.$con.animate({
           left: '-=' + distance
         }, _this.options.speed, function() {
@@ -146,14 +150,16 @@
 
           if (_this.index() === _this.length) {
             _this.$con.css('left', -_this.width);
-            console.log('change');
+            console.log('infinite');
           }
           if (_this.index() === -1) {
             _this.$con.css('left', -_this.$allWidth);
-            console.log('change');
+            console.log('infinite');
           }
 
-          _this.dotActive();
+          if (_this.options.dots) {
+            _this.dotActive();
+          }
         });
       }());
     }
@@ -170,7 +176,8 @@
 
   Slider.prototype.keyboard = function() {
     var _this = this;
-    $('body').on('keydown', function(e) {
+
+    $('body').on('keydown.slider', function(e) {
       var which = e.which;
       if (which === 37 || which === 38) {
         _this.pre();
@@ -189,6 +196,7 @@
 
   Slider.prototype.autoplay = function() {
     var _this = this;
+
     var timer = setInterval(function() {
       var x = _this.next();
 
@@ -198,15 +206,9 @@
     }, _this.options.autoplaySpeed);
   };
 
-  Slider.prototype.hoverStop = function() {
-    if(this.options.autoplay) {
-
-    }
-  }
-
   Slider.prototype.dots = function() {
-    var dotsTem = '<div class="dots">';
-    var dotTem = '<span class="dot"></span>';
+    var dotsTem = '<div class="slider-dots">';
+    var dotTem = '<span class="slider-dot"></span>';
 
     for (var i = 0; i < this.length; i++) {
       dotsTem += dotTem;
@@ -223,17 +225,17 @@
     var i = this.index();
     console.log('current index', i);
 
-    $('.dots .dot').removeClass('active');
-    $('.dots .dot ').eq(i).addClass('active');
+    $('.slider-dots .slider-dot').removeClass('active');
+    $('.slider-dots .slider-dot ').eq(i).addClass('active');
   };
 
   Slider.prototype.dotMove = function() {
     var _this = this;
 
-    $('.dot').on('click', function() {
+    $('.slider-dots .slider-dot').on('click.slider', function() {
       var i = _this.index();
 
-      console.log('dot distance', ($(this).index() - i) * _this.width);
+      console.log('dot distance: %s', ($(this).index() - i) * _this.width);
 
       _this.move(($(this).index() - i) * _this.width);
     });
@@ -243,16 +245,15 @@
   Slider.prototype.arrow = function() {
     var _this = this;
 
-    var arrowBf = '<span class="arrow-bf"><</span>';
-    var arrowAf = '<span class="arrow-af">></span>';
+    var arrowbf = this.options.arrowbf;
+    var arrowaf = this.options.arrowaf;
 
-    this.$element.append(arrowBf);
-    this.$element.append(arrowAf);
+    this.$element.append(_this.options.arrowPre, _this.options.arrowNext);
 
-    $('.arrow-af').on('click', function() {
+    $('.slider-arrow-af').on('click.slider', function() {
       _this.next();
     });
-    $('.arrow-bf').on('click', function() {
+    $('.slider-arrow-bf').on('click.slider', function() {
       _this.pre();
     });
   };
@@ -261,7 +262,7 @@
   Slider.prototype.resize = function() {
     var _this = this;
     var timer = null;
-    $(window).on('resize', function() {
+    $(window).on('resize.slider', function() {
       console.log('11');
       if (timer) clearTimeout(timer);
       timer = setTimeout(_this.init(), 500);
@@ -269,11 +270,22 @@
     });
   };
 
-  // register as a jQuery plugin
-  // TODO: add no conflict
-  $.fn.slider = function(options) {
-    var slider = new Slider(this, options);
-    return slider;
+  $.fn.slider = function() {
+    var _this = this;
+    var opt = arguments[0];
+    var args = Array.prototype.slice.call(arguments, 1);
+    var l = _this.length;
+    var i;
+    var ret;
+
+    for (i = 0; i < l; i++) {
+        if (typeof opt == 'object' || typeof opt == 'undefined')
+            _this[i].slick = new Slider(_this[i], opt);
+        else
+            ret = _this[i].slider[opt].apply(_this[i].slider, args);
+        if (typeof ret != 'undefined') return ret;
+    }
+    return _this;
   };
 
 }(jQuery));
