@@ -2,7 +2,7 @@
 
 slider based on jQuery.
 
-- [Demo and Document]('./docs/doc.md')
+- [Demo and Document](https://github.com/lwxyfer/toolkit/blob/master/slider/docs/api.md)
 
 ## Download
 
