@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>slider</title>
-  <link rel="stylesheet" href="slider.css">
+  <link rel="stylesheet" href="src/slider.css">
 </head>
 <body>
-  <h1>slider</h1>
+  <h1>slider： EXAMPLE</h1>
 
   <div class="slider">
       <div>
@@ -17,23 +17,28 @@
       <div><img src="https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-37451.jpg" alt="1.jpg"></div>
   </div>
 
-
-
-    <button id="pre">PRE</button>
-    <button id="next">NEXT</button>
-
-
-
   <script src="jquery.js"></script>
-  <script src="slider.js"></script>
+  <script src="src/slider.js"></script>
   <script>
   // instance
-  var aa = $('.slider').slider({
+  var ii = 0;
+  $('.slider').slider({
     width: '100%',
     height: 500,
     // autoplay: true,
-    resize: true
+    resize: true,
+    callback: function() {
+      console.log('callback: %s', ++ii);
+      console.log(this.getIndex())
+    }
   })
+
+  var b = $('.slider').slider('getIndex')
+  console.log('get index:::::', b)
+  var c = $('.slider').slider('width')
+  console.log('get width:::::', c)
+
+  // $('.slider').slider('destroy')
   </script>
 </body>
 </html>

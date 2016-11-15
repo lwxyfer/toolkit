@@ -7,7 +7,7 @@ gulp.task('server', () => {
       baseDir: './'
     }
   });
-  gulp.watch('*', () => {
+  gulp.watch('src/*', () => {
     bs.reload();
   })
 })

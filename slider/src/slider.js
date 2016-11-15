@@ -1,22 +1,29 @@
 
-
 /**
  * Slider
  * Author: LWXYFER
  * TODO:
- *  add drag
- *  use css class
+ *   add drag event
  */
 
-(function($){
+(function(factory) {
   'use strict';
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports !== 'undefined') {
+    module.exports = factory(require('jquery'));
+  } else {
+    factory(jQuery);
+  }
+}(function($){
+  'use strict';
+
   var Slider = function(element, options) {
 
     this.$element = $(element);
     this.content = this.$element.html();
     this.$element.html('<div class="slider-con">' + this.content + '</div>');
 
-    // users has other names
     this.$element.addClass('slider');
     this.$con = $('.slider-con');
     this.$child = this.$con.children();
@@ -25,11 +32,13 @@
 
     this.status = true; // judging scroll status
     this.init();
+
+    // return Slider
   };
 
   Slider.DEFAULTS = {
     width: '100%',
-    height: 'auto',
+    height: '100%',
     speed: 200,
     infinite: true,
     autoplay: false,
@@ -71,6 +80,7 @@
 
     $con.css('left', -this.width);
 
+    this.index = this.getIndex();
     // simplify
     if (options.keyboard) {
       this.keyboard();
@@ -89,34 +99,34 @@
     // }
   };
 
-  Slider.prototype.reinit = function() {
-    var $element = this.$element;
-    var $child = this.$child;
-    var $con = this.$con;
-    var options = this.options;
+  // Slider.prototype.reinit = function() {
+  //   var $element = this.$element;
+  //   var $child = this.$child;
+  //   var $con = this.$con;
+  //   var options = this.options;
+  //
+  //   $element.css('width', options.width);
+  //   this.width = $element.width(); // if use percentage, need get real width
+  //   this.length = $child.length;
+  //
+  //   console.log('width', this.width);
+  //
+  //   this.$allWidth = this.width * $child.length;
+  //   this.$fullWidth = this.width * ($child.length + 1);
+  //
+  //   $child.css('width', this.width);
+  //   $element.css('height', options.height);
+  //
+  //   $con.css('width', (this.$fullWidth).toString());
+  //
+  //   // infinitescroll
+  //   $con.append($con.children().eq(0).clone());
+  //   $con.prepend($con.children().eq(this.length - 1).clone());
+  //
+  //   $con.css('left', -this.width);
+  // }
 
-    $element.css('width', options.width);
-    this.width = $element.width(); // if use percentage, need get real width
-    this.length = $child.length;
-
-    console.log('width', this.width);
-
-    this.$allWidth = this.width * $child.length;
-    this.$fullWidth = this.width * ($child.length + 1);
-
-    $child.css('width', this.width);
-    $element.css('height', options.height);
-
-    $con.css('width', (this.$fullWidth).toString());
-
-    // infinitescroll
-    $con.append($con.children().eq(0).clone());
-    $con.prepend($con.children().eq(this.length - 1).clone());
-
-    $con.css('left', -this.width);
-  }
-
-  Slider.prototype.destory = function() {
+  Slider.prototype.destroy = function() {
     $('body').off('keydown.slider');
     $('.slider-dots .slider-dot').off('click.slider');
     $('.slider-arrow-af, .slider-arrow-bf').off('click.slider');
@@ -131,7 +141,7 @@
 
     // not infinite scroll
     if (!this.infinite) {
-      if(this.index === this.length) {
+      if (this.getIndex === this.length) {
         return false;
       }
     }
@@ -148,17 +158,20 @@
 
           _this.status = !_this.status;
 
-          if (_this.index() === _this.length) {
+          if (_this.getIndex() === _this.length) {
             _this.$con.css('left', -_this.width);
             console.log('infinite');
           }
-          if (_this.index() === -1) {
+          if (_this.getIndex() === -1) {
             _this.$con.css('left', -_this.$allWidth);
             console.log('infinite');
           }
 
           if (_this.options.dots) {
             _this.dotActive();
+          }
+          if (_this.options.callback) {
+            _this.options.callback.call(_this);
           }
         });
       }());
@@ -187,12 +200,12 @@
     });
   };
 
-  Slider.prototype.index = function() {
+  Slider.prototype.getIndex = function() {
     var ml = Number(this.$con.css('left').slice(0,-2));
     var w = this.width;
     var i = Math.abs(-ml / w) - 1; // clone the first slider, so minusing 1
     return i;
-  }
+  };
 
   Slider.prototype.autoplay = function() {
     var _this = this;
@@ -222,31 +235,35 @@
   };
 
   Slider.prototype.dotActive = function() {
-    var i = this.index();
-    console.log('current index', i);
+    var i = this.getIndex();
+    console.log('current getIndex', i);
 
     $('.slider-dots .slider-dot').removeClass('active');
     $('.slider-dots .slider-dot ').eq(i).addClass('active');
   };
 
-  Slider.prototype.dotMove = function() {
+  Slider.prototype.dotMove = function(iIn) {
     var _this = this;
 
+    // add custom index input
+    if (iIn) {
+      var i = _this.getIndex();
+      _this.move((iIn - i) * _this.width);
+      return true;
+    }
+
     $('.slider-dots .slider-dot').on('click.slider', function() {
-      var i = _this.index();
+      var i = _this.getIndex();
 
-      console.log('dot distance: %s', ($(this).index() - i) * _this.width);
+      console.log('dot distance: %s', ($(this).getIndex() - i) * _this.width);
 
-      _this.move(($(this).index() - i) * _this.width);
+      _this.move(($(this).getIndex() - i) * _this.width);
     });
 
   };
 
   Slider.prototype.arrow = function() {
     var _this = this;
-
-    var arrowbf = this.options.arrowbf;
-    var arrowaf = this.options.arrowaf;
 
     this.$element.append(_this.options.arrowPre, _this.options.arrowNext);
 
@@ -259,16 +276,16 @@
   };
 
   // TODO: add debounce
-  Slider.prototype.resize = function() {
-    var _this = this;
-    var timer = null;
-    $(window).on('resize.slider', function() {
-      console.log('11');
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(_this.init(), 500);
-      // debounce(_this.init, 500);
-    });
-  };
+  // Slider.prototype.resize = function() {
+  //   var _this = this;
+  //   var timer = null;
+  //   $(window).on('resize.slider', function() {
+  //     console.log('11');
+  //     if (timer) clearTimeout(timer);
+  //     timer = setTimeout(_this.init(), 500);
+  //     // debounce(_this.init, 500);
+  //   });
+  // };
 
   $.fn.slider = function() {
     var _this = this;
@@ -279,13 +296,17 @@
     var ret;
 
     for (i = 0; i < l; i++) {
-        if (typeof opt == 'object' || typeof opt == 'undefined')
-            _this[i].slick = new Slider(_this[i], opt);
-        else
-            ret = _this[i].slider[opt].apply(_this[i].slider, args);
-        if (typeof ret != 'undefined') return ret;
+      if (typeof opt == 'object' || typeof opt == 'undefined') {
+        _this[i].slider = new Slider(_this[i], opt);
+      } else {
+        var type = typeof _this[i].slider[opt] === 'function';
+        ret = type ? _this[i].slider[opt].apply(_this[i].slider, args) : _this[i].slider[opt];
+      }
+      if (typeof ret != 'undefined') {
+        return ret;
+      }
     }
     return _this;
   };
 
-}(jQuery));
+}));
